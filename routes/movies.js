@@ -4,7 +4,7 @@ const authenticateJWT = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/create', authenticateJWT, createMovie);
+router.post('/create', authenticateJWT,createMovie);
 router.get('/allmovie' ,authenticateJWT,  getMovies);
 router.get('/search/:id', authenticateJWT, getMovie);
 router.put('/update/:id', authenticateJWT, updateMovie);
