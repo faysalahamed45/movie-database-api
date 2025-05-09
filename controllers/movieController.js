@@ -4,27 +4,29 @@ const path = require('path');
 // Create a new movie
 exports.createMovie = async (req, res) => {
     try {
-        const { title, genre, releaseYear, director, cast, rating, description } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : '';
-
-        const newMovie = new Movie({
-            title,
-            genre,
-            releaseYear,
-            director,
-            cast: cast.split(',').map(c => c.trim()),
-            rating,
-            description,
-            image,
-        });
-
-        await newMovie.save();
-        res.status(201).json(newMovie);
+      const { title, genre, releaseYear, director, cast, rating, description } = req.body;
+  
+      const image = req.file ? req.file.path : null; // ✅ Cloudinary URL
+  
+      const newMovie = new Movie({
+        title,
+        genre,
+        releaseYear,
+        director,
+        cast: cast.split(",").map((c) => c.trim()),
+        rating,
+        description,
+        image,
+      });
+  
+      await newMovie.save();
+      res.status(201).json(newMovie);
     } catch (err) {
-        res.status(400).json({ message: 'Error creating movie', error: err });
+      console.error("Create error:", err);
+      res.status(500).json({ message: "Error creating movie", error: err.message });
     }
-};
-
+  };
+  
 
 // Get all movies
 exports.getMovies = async (req, res) => {
@@ -53,28 +55,18 @@ exports.updateMovie = async (req, res) => {
       const movie = await Movie.findById(req.params.id);
       if (!movie) return res.status(404).json({ message: "Movie not found" });
   
-      const {
-        title,
-        genre,
-        releaseYear,
-        director,
-        cast,
-        rating,
-        description,
-      } = req.body;
+      const { title, genre, releaseYear, director, cast, rating, description } = req.body;
   
-      // ✅ Update fields
       movie.title = title;
       movie.genre = genre;
       movie.releaseYear = releaseYear;
       movie.director = director;
-      movie.cast = cast ? cast.split(",").map(c => c.trim()) : movie.cast;
+      movie.cast = cast ? cast.split(",").map((c) => c.trim()) : movie.cast;
       movie.rating = rating;
       movie.description = description;
   
-      // ✅ Optional image update
       if (req.file) {
-        movie.image = `/uploads/${req.file.filename}`;
+        movie.image = req.file.path; // ✅ Cloudinary URL
       }
   
       await movie.save();
@@ -84,6 +76,7 @@ exports.updateMovie = async (req, res) => {
       res.status(500).json({ message: "Error updating movie", error: err.message });
     }
   };
+  
    
 
 // Delete a movie
