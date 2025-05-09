@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { createMovie, getMovies, getMovie, updateMovie, deleteMovie } = require("../controllers/movieController");
-const authenticateJWT = require("../middleware/auth");
+const authenticateJWT = require('../middleware/authMiddleware');
 
 const multer = require("multer");
 const { storage } = require("../utils/cloudinary"); // ✅ use cloudinary
